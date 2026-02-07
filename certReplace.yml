@@ -1,0 +1,51 @@
+---
+- name: Certificates Replacement
+  hosts: all
+  gather_facts: no
+
+- name: Backup certs
+  copy:
+    src: /opt/app/certs
+    dest: "/opt/app/certs_{{ ansible_date_time.iso8601 }}"
+     
+- name: Fetch certificate from internal API
+  uri:
+    url: "{{ api_url }}/getCert/{{ inventory_hostname }}"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ api_token }}"
+    return_content: yes
+  register: cert_response
+
+- name: Write JKS certificate
+  shell: "cd /opt/app/certs; echo 'Generate JKS certs'"
+
+- name: Write P12 certificate
+  shell: "cd /opt/app/certs; echo 'Generate P12 certs'"
+
+- name: Write PEM certificate
+  shell: "cd /opt/app/certs; echo 'Generate pem certs'"
+
+- name: Restart JBoss
+  when: "'jboss' in inventory_hostname"
+  systemd:
+    name: jboss
+    state: restarted
+
+- name: Restart Tomcat
+  when: "'tomcat' in inventory_hostname"
+  systemd:
+    name: tomcat
+    state: restarted
+
+- name: Restart Nginx
+  when: "'nginx' in inventory_hostname"
+  systemd:
+    name: nginx
+    state: restarted
+
+- name: Restart Httpd
+  when: "'httpd' in inventory_hostname"
+  systemd:
+    name: httpd
+    state: restarted

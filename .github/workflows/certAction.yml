@@ -27,4 +27,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Replace Certificates & Restart Apps
-        run: ansible-playbook playbooks/certReplacement.yml -i inventory.yml 
+        run: ansible-playbook playbooks/certReplace.yml -i inventory.yml 

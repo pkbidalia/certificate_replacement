@@ -1,2 +1,2 @@
-# ruby
-For ruby scripts
+# ansible
+For ansible scripts
